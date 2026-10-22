@@ -12,5 +12,6 @@
     <description>Plataforma de autorização e antifraude de cartões de crédito</description>
 
     <modules>
+        <module>platform/spring-parent</module>
     </modules>
 </project>
