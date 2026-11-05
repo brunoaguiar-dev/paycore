@@ -13,5 +13,6 @@
 
     <modules>
         <module>platform/spring-parent</module>
+        <module>services/card-service</module>
     </modules>
 </project>
