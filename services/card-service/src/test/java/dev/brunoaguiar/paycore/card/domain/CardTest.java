@@ -11,7 +11,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class CardTest {
 
     private Card newCard() {
-        return new Card(YearMonth.of(2030, 12));
+        return newCardExpiringIn(YearMonth.of(2030, 12));
+    }
+
+    private Card newCardExpiringIn(YearMonth expiration) {
+        return new Card(new CardNumber("4111111111111234"), "MARIA SILVA", expiration);
     }
 
     @Test
@@ -69,7 +73,7 @@ class CardTest {
 
     @Test
     void cardIsExpiredAfterExpirationMonth() {
-        Card card = new Card(YearMonth.of(2030, 12));
+        Card card = newCardExpiringIn(YearMonth.of(2030, 12));
 
         boolean expired = card.isExpiredOn(LocalDate.of(2031, 1, 1));
 
@@ -78,10 +82,45 @@ class CardTest {
 
     @Test
     void cardIsNotExpiredOnLastDayOfExpirationMonth() {
-        Card card = new Card(YearMonth.of(2030, 12));
+        Card card = newCardExpiringIn(YearMonth.of(2030, 12));
 
         boolean expired = card.isExpiredOn(LocalDate.of(2030, 12, 31));
 
         assertThat(expired).isFalse();
+    }
+
+    @Test
+    void cardKeepsNumberAndHolderName() {
+        CardNumber number = new CardNumber("4111111111111234");
+
+        Card card = new Card(number, "MARIA SILVA", YearMonth.of(2030, 12));
+
+        assertThat(card.number()).isEqualTo(number);
+        assertThat(card.holderName()).isEqualTo("MARIA SILVA");
+    }
+
+    @Test
+    void cardWithoutNumberIsNotAllowed() {
+        YearMonth expiration = YearMonth.of(2030, 12);
+
+        assertThatThrownBy(() -> new Card(null, "MARIA SILVA", expiration))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void cardWithBlankHolderNameIsNotAllowed() {
+        CardNumber number = new CardNumber("4111111111111234");
+        YearMonth expiration = YearMonth.of(2030, 12);
+
+        assertThatThrownBy(() -> new Card(number, " ", expiration))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void cardWithoutExpirationIsNotAllowed() {
+        CardNumber number = new CardNumber("4111111111111234");
+
+        assertThatThrownBy(() -> new Card(number, "MARIA SILVA", null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
