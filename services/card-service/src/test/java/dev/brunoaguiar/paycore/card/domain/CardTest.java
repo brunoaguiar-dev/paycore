@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -122,5 +123,26 @@ class CardTest {
 
         assertThatThrownBy(() -> new Card(number, "MARIA SILVA", null))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void newCardsHaveDifferentIds() {
+        Card firstCard = newCard();
+        Card secondCard = newCard();
+
+        assertThat(firstCard.id()).isNotNull();
+        assertThat(firstCard.id()).isNotEqualTo(secondCard.id());
+    }
+
+    @Test
+    void restoredCardKeepsIdAndStatus() {
+        UUID id = UUID.randomUUID();
+        CardNumber number = new CardNumber("4111111111111234");
+        YearMonth expiration = YearMonth.of(2030, 12);
+
+        Card card = Card.restore(id, number, "MARIA SILVA", expiration, CardStatus.BLOCKED);
+
+        assertThat(card.id()).isEqualTo(id);
+        assertThat(card.status()).isEqualTo(CardStatus.BLOCKED);
     }
 }

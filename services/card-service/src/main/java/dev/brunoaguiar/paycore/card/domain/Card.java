@@ -2,15 +2,21 @@ package dev.brunoaguiar.paycore.card.domain;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.UUID;
 
 public class Card {
 
+    private final UUID id;
     private final CardNumber number;
     private final String holderName;
     private final YearMonth expiration;
-    private CardStatus status = CardStatus.ACTIVE;
+    private CardStatus status;
 
     public Card(CardNumber number, String holderName, YearMonth expiration) {
+        this(UUID.randomUUID(), number, holderName, expiration, CardStatus.ACTIVE);
+    }
+
+    private Card(UUID id, CardNumber number, String holderName, YearMonth expiration, CardStatus status) {
         if (number == null) {
             throw new IllegalArgumentException("O número do cartão é obrigatório");
         }
@@ -20,9 +26,23 @@ public class Card {
         if (expiration == null) {
             throw new IllegalArgumentException("A validade do cartão é obrigatória");
         }
+        this.id = id;
         this.number = number;
         this.holderName = holderName;
         this.expiration = expiration;
+        this.status = status;
+    }
+
+    public static Card restore(UUID id, CardNumber number, String holderName, YearMonth expiration, CardStatus status) {
+        return new Card(id, number, holderName, expiration, status);
+    }
+
+    public UUID id() {
+        return id;
+    }
+
+    public YearMonth expiration() {
+        return expiration;
     }
 
     public CardNumber number() {
