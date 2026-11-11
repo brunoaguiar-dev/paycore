@@ -60,7 +60,7 @@ class CardTest {
         card.cancel();
 
         assertThatThrownBy(card::unblock)
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(CanceledCardException.class);
     }
 
     @Test
@@ -69,7 +69,7 @@ class CardTest {
         card.cancel();
 
         assertThatThrownBy(card::block)
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(CanceledCardException.class);
     }
 
     @Test

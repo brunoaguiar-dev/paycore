@@ -63,14 +63,14 @@ public class Card {
 
     public void block() {
         if (status == CardStatus.CANCELED) {
-            throw new IllegalStateException("Cartão cancelado não pode ser bloqueado");
+            throw new CanceledCardException("Cartão cancelado não pode ser bloqueado");
         }
         status = CardStatus.BLOCKED;
     }
 
     public void unblock() {
         if (status == CardStatus.CANCELED) {
-            throw new IllegalStateException("Cartão cancelado não pode ser desbloqueado");
+            throw new CanceledCardException("Cartão cancelado não pode ser desbloqueado");
         }
         status = CardStatus.ACTIVE;
     }
