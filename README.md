@@ -42,16 +42,21 @@ Docker Compose, springdoc (Swagger), JUnit, AssertJ, Mockito e Testcontainers.
 
 ## Como rodar
 
-Precisa de Java 25 e Docker.
+Com Docker:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
+```
+
+Para desenvolvimento, com Java 25, suba só o Postgres e rode o serviço pelo
+Maven:
+
+```bash
+docker compose up -d postgres
 ./mvnw -pl services/card-service spring-boot:run
 ```
 
-Com o serviço rodando, a documentação da API fica em
-http://localhost:8080/swagger-ui.html, onde dá para testar cada endpoint pelo
-navegador.
+A documentação da API (Swagger) fica em http://localhost:8080/swagger-ui.html.
 
 ## API do card-service
 

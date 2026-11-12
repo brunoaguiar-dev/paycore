@@ -18,5 +18,18 @@ services:
       timeout: 3s
       retries: 10
 
+  card-service:
+    build:
+      context: .
+      dockerfile: services/card-service/Dockerfile
+    container_name: paycore-card-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/card_db
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres-data:
