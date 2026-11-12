@@ -10,8 +10,10 @@ consulta, bloqueia e desbloqueia cartões.
 
 ## Arquitetura
 
-Cada serviço segue a arquitetura hexagonal: as regras de negócio ficam no
-domínio, em Java puro, e o banco e a API entram por adaptadores.
+Cada serviço segue a **arquitetura hexagonal** (portas e adaptadores), com a
+regra de dependência da **Clean Architecture**: as regras de negócio ficam no
+domínio, em Java puro, e o banco e a API entram por adaptadores que dependem
+dele.
 
 ```
 adapter.in.web  →  application  →  domain  ←  adapter.out
@@ -20,6 +22,14 @@ adapter.in.web  →  application  →  domain  ←  adapter.out
 
 Cada serviço tem o seu próprio banco no mesmo Postgres, e um serviço não
 consegue ler o banco de outro.
+
+## Práticas
+
+- **TDD** nas regras de domínio e nos casos de uso.
+- **DDD:** domínio modelado a partir de um Event Storming do fluxo de
+  autorização, com entidades, value objects e repositórios como portas.
+- **Testes em camadas:** unidade sem Spring para o domínio e os casos de uso,
+  `@WebMvcTest` para a API e Testcontainers para a persistência.
 
 ## Tecnologias
 
@@ -46,12 +56,13 @@ navegador.
 | Método | Endereço | Resposta |
 |---|---|---|
 | `POST` | `/cards` | 201, com o cartão criado |
-| `GET` | `/cards/{id}` | 200, ou 404 |
+| `GET` | `/cards/{id}` | 200 ou 404 |
 | `POST` | `/cards/{id}/block` | 204, 404 ou 409 |
 | `POST` | `/cards/{id}/unblock` | 204, 404 ou 409 |
 
-O número do cartão sai sempre mascarado. Os erros seguem o formato
-`ProblemDetail` (RFC 9457).
+Os números são gerados com um BIN fictício e o dígito verificador de Luhn, e
+saem sempre mascarados nas respostas. Os erros seguem o formato `ProblemDetail`
+(RFC 9457).
 
 ## Testes
 
