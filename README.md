@@ -1,5 +1,7 @@
 # PayCore
 
+[![CI](https://github.com/brunoaguiar-dev/paycore/actions/workflows/ci.yml/badge.svg)](https://github.com/brunoaguiar-dev/paycore/actions/workflows/ci.yml)
+
 Plataforma de autorização e antifraude de cartões de crédito, construída como
 microserviços. Projeto de estudo, feito fase a fase.
 
