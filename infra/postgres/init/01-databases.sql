@@ -5,3 +5,7 @@
 CREATE USER card_user WITH PASSWORD 'card_pass';
 CREATE DATABASE card_db OWNER card_user;
 REVOKE ALL ON DATABASE card_db FROM PUBLIC;
+
+CREATE USER account_user WITH PASSWORD 'account_pass';
+CREATE DATABASE account_db OWNER account_user;
+REVOKE ALL ON DATABASE account_db FROM PUBLIC;
