@@ -26,7 +26,7 @@ class IssueCardTest {
 
         Card savedCard = cardRepository.findById(card.id()).orElseThrow();
         assertThat(savedCard.number()).isEqualTo(NUMBER);
-        assertThat(savedCard.holderName()).isEqualTo("MARIA SILVA");
+        assertThat(savedCard.holderName().value()).isEqualTo("MARIA SILVA");
         assertThat(savedCard.status()).isEqualTo(CardStatus.ACTIVE);
     }
 

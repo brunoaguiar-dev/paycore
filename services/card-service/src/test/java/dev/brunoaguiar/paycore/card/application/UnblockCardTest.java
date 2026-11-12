@@ -3,6 +3,7 @@ package dev.brunoaguiar.paycore.card.application;
 import dev.brunoaguiar.paycore.card.domain.Card;
 import dev.brunoaguiar.paycore.card.domain.CardNumber;
 import dev.brunoaguiar.paycore.card.domain.CardStatus;
+import dev.brunoaguiar.paycore.card.domain.HolderName;
 import org.junit.jupiter.api.Test;
 
 import java.time.YearMonth;
@@ -18,7 +19,7 @@ class UnblockCardTest {
 
     @Test
     void unblocksABlockedCard() {
-        Card card = new Card(new CardNumber("4111111111111234"), "MARIA SILVA", YearMonth.of(2030, 12));
+        Card card = new Card(new CardNumber("4111111111111234"), new HolderName("MARIA SILVA"), YearMonth.of(2030, 12));
         card.block();
         cardRepository.save(card);
 

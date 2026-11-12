@@ -2,6 +2,7 @@ package dev.brunoaguiar.paycore.card.adapter.in.web;
 
 import dev.brunoaguiar.paycore.card.application.CardNotFoundException;
 import dev.brunoaguiar.paycore.card.domain.CanceledCardException;
+import dev.brunoaguiar.paycore.card.domain.InvalidHolderNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,6 +39,13 @@ class ApiExceptionHandler {
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         problem.setProperty("errors", errors);
 
+        return problem;
+    }
+
+    @ExceptionHandler(InvalidHolderNameException.class)
+    ProblemDetail handleInvalidHolderName(InvalidHolderNameException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        problem.setTitle("Dados inválidos");
         return problem;
     }
 }

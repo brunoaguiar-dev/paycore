@@ -3,6 +3,7 @@ package dev.brunoaguiar.paycore.card.adapter.out.persistence;
 import dev.brunoaguiar.paycore.card.domain.Card;
 import dev.brunoaguiar.paycore.card.domain.CardNumber;
 import dev.brunoaguiar.paycore.card.domain.CardRepository;
+import dev.brunoaguiar.paycore.card.domain.HolderName;
 import org.springframework.stereotype.Repository;
 
 import java.time.YearMonth;
@@ -32,7 +33,7 @@ class CardPersistenceAdapter implements CardRepository {
         return new CardEntity(
                 card.id(),
                 card.number().value(),
-                card.holderName(),
+                card.holderName().value(),
                 card.expiration().atDay(1),
                 card.status());
     }
@@ -41,7 +42,7 @@ class CardPersistenceAdapter implements CardRepository {
         return Card.restore(
                 entity.getId(),
                 new CardNumber(entity.getNumber()),
-                entity.getHolderName(),
+                new HolderName(entity.getHolderName()),
                 YearMonth.from(entity.getExpiration()),
                 entity.getStatus());
     }

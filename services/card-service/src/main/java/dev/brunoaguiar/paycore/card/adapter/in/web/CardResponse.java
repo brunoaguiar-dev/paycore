@@ -11,7 +11,7 @@ public record CardResponse(UUID id, String number, String holderName, String exp
         return new CardResponse(
                 card.id(),
                 card.number().toString(),
-                card.holderName(),
+                card.holderName().value(),
                 card.expiration().toString(),
                 card.status());
     }

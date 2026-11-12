@@ -3,6 +3,7 @@ package dev.brunoaguiar.paycore.card.application;
 import dev.brunoaguiar.paycore.card.domain.Card;
 import dev.brunoaguiar.paycore.card.domain.CardNumberGenerator;
 import dev.brunoaguiar.paycore.card.domain.CardRepository;
+import dev.brunoaguiar.paycore.card.domain.HolderName;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -25,7 +26,7 @@ public class IssueCard {
 
     public Card execute(String holderName) {
         YearMonth expiration = YearMonth.now(clock).plusYears(VALIDITY_YEARS);
-        Card card = new Card(cardNumberGenerator.generate(), holderName, expiration);
+        Card card = new Card(cardNumberGenerator.generate(), new HolderName(holderName), expiration);
         cardRepository.save(card);
         return card;
     }

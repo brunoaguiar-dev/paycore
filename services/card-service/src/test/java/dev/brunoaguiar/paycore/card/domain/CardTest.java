@@ -16,7 +16,7 @@ class CardTest {
     }
 
     private Card newCardExpiringIn(YearMonth expiration) {
-        return new Card(new CardNumber("4111111111111234"), "MARIA SILVA", expiration);
+        return new Card(new CardNumber("4111111111111234"), new HolderName("MARIA SILVA"), expiration);
     }
 
     @Test
@@ -94,34 +94,36 @@ class CardTest {
     void cardKeepsNumberAndHolderName() {
         CardNumber number = new CardNumber("4111111111111234");
 
-        Card card = new Card(number, "MARIA SILVA", YearMonth.of(2030, 12));
+        Card card = new Card(number, new HolderName("MARIA SILVA"), YearMonth.of(2030, 12));
 
         assertThat(card.number()).isEqualTo(number);
-        assertThat(card.holderName()).isEqualTo("MARIA SILVA");
+        assertThat(card.holderName().value()).isEqualTo("MARIA SILVA");
     }
 
     @Test
     void cardWithoutNumberIsNotAllowed() {
+        HolderName holderName = new HolderName("MARIA SILVA");
         YearMonth expiration = YearMonth.of(2030, 12);
 
-        assertThatThrownBy(() -> new Card(null, "MARIA SILVA", expiration))
+        assertThatThrownBy(() -> new Card(null, holderName, expiration))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void cardWithBlankHolderNameIsNotAllowed() {
+    void cardWithoutHolderNameIsNotAllowed() {
         CardNumber number = new CardNumber("4111111111111234");
         YearMonth expiration = YearMonth.of(2030, 12);
 
-        assertThatThrownBy(() -> new Card(number, " ", expiration))
+        assertThatThrownBy(() -> new Card(number, null, expiration))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void cardWithoutExpirationIsNotAllowed() {
         CardNumber number = new CardNumber("4111111111111234");
+        HolderName holderName = new HolderName("MARIA SILVA");
 
-        assertThatThrownBy(() -> new Card(number, "MARIA SILVA", null))
+        assertThatThrownBy(() -> new Card(number, holderName, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -140,7 +142,7 @@ class CardTest {
         CardNumber number = new CardNumber("4111111111111234");
         YearMonth expiration = YearMonth.of(2030, 12);
 
-        Card card = Card.restore(id, number, "MARIA SILVA", expiration, CardStatus.BLOCKED);
+        Card card = Card.restore(id, number, new HolderName("MARIA SILVA"), expiration, CardStatus.BLOCKED);
 
         assertThat(card.id()).isEqualTo(id);
         assertThat(card.status()).isEqualTo(CardStatus.BLOCKED);

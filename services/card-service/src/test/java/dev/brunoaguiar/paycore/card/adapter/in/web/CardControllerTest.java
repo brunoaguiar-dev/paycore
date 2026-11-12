@@ -4,6 +4,7 @@ import dev.brunoaguiar.paycore.card.application.*;
 import dev.brunoaguiar.paycore.card.domain.CanceledCardException;
 import dev.brunoaguiar.paycore.card.domain.Card;
 import dev.brunoaguiar.paycore.card.domain.CardNumber;
+import dev.brunoaguiar.paycore.card.domain.HolderName;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ class CardControllerTest {
 
     @Test
     void issuesCard() throws Exception {
-        Card card = new Card(new CardNumber("9999990000001234"), "MARIA SILVA", YearMonth.of(2031, 11));
+        Card card = new Card(new CardNumber("9999990000001234"), new HolderName("MARIA SILVA"), YearMonth.of(2031, 11));
         when(issueCard.execute("MARIA SILVA")).thenReturn(card);
 
         mockMvc.perform(post("/cards")
@@ -60,7 +61,7 @@ class CardControllerTest {
 
     @Test
     void returnsCard() throws Exception {
-        Card card = new Card(new CardNumber("9999990000001234"), "MARIA SILVA", YearMonth.of(2031, 11));
+        Card card = new Card(new CardNumber("9999990000001234"), new HolderName("MARIA SILVA"), YearMonth.of(2031, 11));
         when(getCard.execute(card.id())).thenReturn(card);
 
         mockMvc.perform(get("/cards/{id}", card.id()))

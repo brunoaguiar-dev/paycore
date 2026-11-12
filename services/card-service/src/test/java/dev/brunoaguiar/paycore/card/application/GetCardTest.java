@@ -2,6 +2,7 @@ package dev.brunoaguiar.paycore.card.application;
 
 import dev.brunoaguiar.paycore.card.domain.Card;
 import dev.brunoaguiar.paycore.card.domain.CardNumber;
+import dev.brunoaguiar.paycore.card.domain.HolderName;
 import org.junit.jupiter.api.Test;
 
 import java.time.YearMonth;
@@ -17,13 +18,13 @@ class GetCardTest {
 
     @Test
     void returnsAnExistingCard() {
-        Card card = new Card(new CardNumber("4111111111111234"), "MARIA SILVA", YearMonth.of(2030, 12));
+        Card card = new Card(new CardNumber("4111111111111234"), new HolderName("MARIA SILVA"), YearMonth.of(2030, 12));
         cardRepository.save(card);
 
         Card foundCard = getCard.execute(card.id());
 
         assertThat(foundCard.id()).isEqualTo(card.id());
-        assertThat(foundCard.holderName()).isEqualTo("MARIA SILVA");
+        assertThat(foundCard.holderName().value()).isEqualTo("MARIA SILVA");
     }
 
     @Test

@@ -8,19 +8,19 @@ public class Card {
 
     private final UUID id;
     private final CardNumber number;
-    private final String holderName;
+    private final HolderName holderName;
     private final YearMonth expiration;
     private CardStatus status;
 
-    public Card(CardNumber number, String holderName, YearMonth expiration) {
+    public Card(CardNumber number, HolderName holderName, YearMonth expiration) {
         this(UUID.randomUUID(), number, holderName, expiration, CardStatus.ACTIVE);
     }
 
-    private Card(UUID id, CardNumber number, String holderName, YearMonth expiration, CardStatus status) {
+    private Card(UUID id, CardNumber number, HolderName holderName, YearMonth expiration, CardStatus status) {
         if (number == null) {
             throw new IllegalArgumentException("O número do cartão é obrigatório");
         }
-        if (holderName == null || holderName.isBlank()) {
+        if (holderName == null) {
             throw new IllegalArgumentException("O nome do titular é obrigatório");
         }
         if (expiration == null) {
@@ -33,7 +33,7 @@ public class Card {
         this.status = status;
     }
 
-    public static Card restore(UUID id, CardNumber number, String holderName, YearMonth expiration, CardStatus status) {
+    public static Card restore(UUID id, CardNumber number, HolderName holderName, YearMonth expiration, CardStatus status) {
         return new Card(id, number, holderName, expiration, status);
     }
 
@@ -49,7 +49,7 @@ public class Card {
         return number;
     }
 
-    public String holderName() {
+    public HolderName holderName() {
         return holderName;
     }
 
