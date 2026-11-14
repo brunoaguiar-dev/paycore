@@ -18,4 +18,8 @@ public record Money(BigDecimal amount) {
     public static Money of(String amount) {
         return new Money(new BigDecimal(amount));
     }
+
+    public boolean isZero() {
+        return amount.signum() == 0;
+    }
 }
