@@ -27,6 +27,11 @@ class CreditAccountPersistenceAdapter implements CreditAccountRepository {
         return jpaRepository.findById(id).map(this::toDomain);
     }
 
+    @Override
+    public boolean existsByCardId(UUID cardId) {
+        return jpaRepository.existsByCardId(cardId);
+    }
+
     private CreditAccountEntity toEntity(CreditAccount account) {
         return new CreditAccountEntity(
                 account.id(),

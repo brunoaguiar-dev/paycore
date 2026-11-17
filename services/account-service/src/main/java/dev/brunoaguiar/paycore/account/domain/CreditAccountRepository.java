@@ -8,4 +8,6 @@ public interface CreditAccountRepository {
     void save(CreditAccount account);
 
     Optional<CreditAccount> findById(UUID id);
+
+    boolean existsByCardId(UUID cardId);
 }
