@@ -45,4 +45,11 @@ public class CreditAccount {
     public Money availableCredit() {
         return availableCredit;
     }
+
+    public void reserve(Money amount) {
+        if (amount.isGreaterThan(availableCredit)) {
+            throw new InsufficientCreditException(availableCredit, amount);
+        }
+        availableCredit = availableCredit.minus(amount);
+    }
 }

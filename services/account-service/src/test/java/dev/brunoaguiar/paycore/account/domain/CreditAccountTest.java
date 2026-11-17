@@ -44,4 +44,32 @@ class CreditAccountTest {
         assertThat(account.id()).isEqualTo(id);
         assertThat(account.availableCredit()).isEqualTo(Money.of("1200.00"));
     }
+
+    @Test
+    void reservingDecreasesAvailableCredit() {
+        CreditAccount account = new CreditAccount(UUID.randomUUID(), Money.of("5000.00"));
+
+        account.reserve(Money.of("80.00"));
+
+        assertThat(account.availableCredit()).isEqualTo(Money.of("4920.00"));
+    }
+
+    @Test
+    void reservingAllAvailableCreditIsAllowed() {
+        CreditAccount account = new CreditAccount(UUID.randomUUID(), Money.of("5000.00"));
+
+        account.reserve(Money.of("5000.00"));
+
+        assertThat(account.availableCredit()).isEqualTo(Money.of("0.00"));
+    }
+
+    @Test
+    void reservingMoreThanAvailableCreditIsNotAllowed() {
+        CreditAccount account = new CreditAccount(UUID.randomUUID(), Money.of("5000.00"));
+        Money amount = Money.of("5000.01");
+
+        assertThatThrownBy(() -> account.reserve(amount))
+                .isInstanceOf(InsufficientCreditException.class);
+        assertThat(account.availableCredit()).isEqualTo(Money.of("5000.00"));
+    }
 }
