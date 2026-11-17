@@ -49,15 +49,18 @@ Com Docker:
 docker compose up -d --build
 ```
 
+| Serviço | Porta | Swagger |
+|---|---|---|
+| card-service | 8080 | http://localhost:8080/swagger-ui.html |
+| account-service | 8081 | http://localhost:8081/swagger-ui.html |
+
 Para desenvolvimento, com Java 25, suba só o Postgres e rode o serviço pelo
 Maven:
 
 ```bash
 docker compose up -d postgres
-./mvnw -pl services/card-service spring-boot:run
+./mvnw -pl services/<serviço> spring-boot:run
 ```
-
-A documentação da API (Swagger) fica em http://localhost:8080/swagger-ui.html.
 
 ## API do card-service
 
