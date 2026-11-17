@@ -7,8 +7,9 @@ microserviços. Projeto de estudo, feito fase a fase.
 
 ## Status
 
-Fase 1 em andamento. O primeiro serviço, o **card-service**, está pronto: emite,
-consulta, bloqueia e desbloqueia cartões.
+Fase 1 em andamento. O **card-service** emite, consulta, bloqueia e desbloqueia
+cartões. O **account-service** abre e consulta a conta de crédito de cada
+cartão, com o limite total e o disponível.
 
 ## Arquitetura
 
@@ -62,7 +63,7 @@ A documentação da API (Swagger) fica em http://localhost:8080/swagger-ui.html.
 
 | Método | Endereço | Resposta |
 |---|---|---|
-| `POST` | `/cards` | 201, com o cartão criado |
+| `POST` | `/cards` | 201 com o cartão criado, ou 400 |
 | `GET` | `/cards/{id}` | 200 ou 404 |
 | `POST` | `/cards/{id}/block` | 204, 404 ou 409 |
 | `POST` | `/cards/{id}/unblock` | 204, 404 ou 409 |
@@ -70,6 +71,16 @@ A documentação da API (Swagger) fica em http://localhost:8080/swagger-ui.html.
 Os números são gerados com um BIN fictício e o dígito verificador de Luhn, e
 saem sempre mascarados nas respostas. Os erros seguem o formato `ProblemDetail`
 (RFC 9457).
+
+## API do account-service
+
+| Método | Endereço | Resposta |
+|---|---|---|
+| `POST` | `/accounts` | 201 com a conta criada, 400, ou 409 se o cartão já tiver conta |
+| `GET` | `/accounts/{id}` | 200 ou 404 |
+
+Os valores usam `BigDecimal`, com 2 casas e arredondamento bancário (HALF_EVEN).
+Cada cartão tem uma única conta de crédito.
 
 ## Testes
 
