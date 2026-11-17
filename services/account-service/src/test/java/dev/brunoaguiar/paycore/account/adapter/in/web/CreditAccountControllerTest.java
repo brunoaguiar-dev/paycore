@@ -1,5 +1,7 @@
 package dev.brunoaguiar.paycore.account.adapter.in.web;
 
+import dev.brunoaguiar.paycore.account.application.CreditAccountAlreadyExistsException;
+import dev.brunoaguiar.paycore.account.application.CreditAccountNotFoundException;
 import dev.brunoaguiar.paycore.account.application.GetCreditAccount;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import dev.brunoaguiar.paycore.account.application.OpenCreditAccount;
@@ -62,5 +64,43 @@ class CreditAccountControllerTest {
                 .andExpect(jsonPath("$.id").value(account.id().toString()))
                 .andExpect(jsonPath("$.creditLimit").value(5000.00))
                 .andExpect(jsonPath("$.availableCredit").value(1200.50));
+    }
+
+    @Test
+    void returnsNotFoundWhenAccountDoesNotExist() throws Exception {
+        UUID id = UUID.randomUUID();
+        when(getCreditAccount.execute(id)).thenThrow(new CreditAccountNotFoundException(id));
+
+        mockMvc.perform(get("/accounts/{id}", id))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Conta de crédito não encontrada"))
+                .andExpect(jsonPath("$.detail").value("Conta de crédito não encontrada: " + id));
+    }
+
+    @Test
+    void returnsConflictWhenCardAlreadyHasAccount() throws Exception {
+        UUID cardId = UUID.randomUUID();
+        when(openCreditAccount.execute(cardId, Money.of("5000.00")))
+                .thenThrow(new CreditAccountAlreadyExistsException(cardId));
+
+        mockMvc.perform(post("/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "cardId": "%s", "creditLimit": 5000.00 }
+                                """.formatted(cardId)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Conta de crédito já existe"));
+    }
+
+    @Test
+    void returnsBadRequestWhenCreditLimitIsZero() throws Exception {
+        mockMvc.perform(post("/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "cardId": "%s", "creditLimit": 0 }
+                                """.formatted(UUID.randomUUID())))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Dados inválidos"))
+                .andExpect(jsonPath("$.errors.creditLimit").value("O limite de crédito deve ser maior que zero"));
     }
 }
