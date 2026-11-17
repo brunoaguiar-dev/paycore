@@ -3,13 +3,12 @@ WORKDIR /workspace
 
 COPY mvnw .
 COPY .mvn .mvn
-COPY pom.xml .
 COPY platform/spring-parent/pom.xml platform/spring-parent/
 COPY services/card-service/pom.xml services/card-service/
-RUN ./mvnw -B -pl services/card-service -am dependency:go-offline
+RUN ./mvnw -B -f services/card-service/pom.xml dependency:go-offline
 
 COPY services/card-service/src services/card-service/src
-RUN ./mvnw -B -pl services/card-service -am package -DskipTests
+RUN ./mvnw -B -f services/card-service/pom.xml package -DskipTests
 
 FROM eclipse-temurin:25-jre
 WORKDIR /app
