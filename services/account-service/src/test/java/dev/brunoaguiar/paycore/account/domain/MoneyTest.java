@@ -23,4 +23,17 @@ class MoneyTest {
         assertThatThrownBy(() -> Money.of("-1.00"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void subtractsAmounts() {
+        Money result = Money.of("100.00").minus(Money.of("30.50"));
+
+        assertThat(result).isEqualTo(Money.of("69.50"));
+    }
+
+    @Test
+    void comparesAmounts() {
+        assertThat(Money.of("100.00").isGreaterThan(Money.of("99.99"))).isTrue();
+        assertThat(Money.of("100.00").isGreaterThan(Money.of("100.00"))).isFalse();
+    }
 }
