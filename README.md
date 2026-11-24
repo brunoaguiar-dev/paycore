@@ -9,7 +9,7 @@ microserviços. Projeto de estudo, feito fase a fase.
 
 Fase 1 em andamento. O **card-service** emite, consulta, bloqueia e desbloqueia
 cartões. O **account-service** abre e consulta a conta de crédito de cada
-cartão, com o limite total e o disponível.
+cartão, com o limite total e o disponível, e reserva limite para compras.
 
 ## Arquitetura
 
@@ -81,6 +81,7 @@ saem sempre mascarados nas respostas. Os erros seguem o formato `ProblemDetail`
 |---|---|---|
 | `POST` | `/accounts` | 201 com a conta criada, 400, ou 409 se o cartão já tiver conta |
 | `GET` | `/accounts/{id}` | 200 ou 404 |
+| `POST` | `/accounts/reserve` | 204, 400, 404, ou 422 se faltar crédito disponível |
 
 Os valores usam `BigDecimal`, com 2 casas e arredondamento bancário (HALF_EVEN).
 Cada cartão tem uma única conta de crédito.

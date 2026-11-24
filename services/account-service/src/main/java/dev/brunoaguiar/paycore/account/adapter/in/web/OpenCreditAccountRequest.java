@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record OpenCreditAccountRequest(
+record OpenCreditAccountRequest(
         @NotNull(message = "O cartão é obrigatório")
         UUID cardId,
 

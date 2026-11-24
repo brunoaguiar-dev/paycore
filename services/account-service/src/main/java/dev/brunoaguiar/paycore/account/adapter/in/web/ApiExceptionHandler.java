@@ -2,6 +2,7 @@ package dev.brunoaguiar.paycore.account.adapter.in.web;
 
 import dev.brunoaguiar.paycore.account.application.CreditAccountAlreadyExistsException;
 import dev.brunoaguiar.paycore.account.application.CreditAccountNotFoundException;
+import dev.brunoaguiar.paycore.account.domain.InsufficientCreditException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +26,13 @@ class ApiExceptionHandler {
     ProblemDetail handleCreditAccountAlreadyExists(CreditAccountAlreadyExistsException exception) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
         problem.setTitle("Conta de crédito já existe");
+        return problem;
+    }
+
+    @ExceptionHandler(InsufficientCreditException.class)
+    ProblemDetail handleInsufficientCredit(InsufficientCreditException exception) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, exception.getMessage());
+        problem.setTitle("Crédito insuficiente");
         return problem;
     }
 
