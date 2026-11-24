@@ -22,4 +22,12 @@ public record Money(BigDecimal amount) {
     public boolean isZero() {
         return amount.signum() == 0;
     }
+
+    public Money minus(Money other) {
+        return new Money(amount.subtract(other.amount));
+    }
+
+    public boolean isGreaterThan(Money other) {
+        return amount.compareTo(other.amount) > 0;
+    }
 }

@@ -43,4 +43,15 @@ class CreditAccountPersistenceAdapterTest {
 
         assertThat(found).isEmpty();
     }
+
+    @Test
+    void savedAccountCanBeFoundByCardId() {
+        CreditAccount account = new CreditAccount(UUID.randomUUID(), Money.of("3000.00"));
+
+        creditAccountRepository.save(account);
+        Optional<CreditAccount> found = creditAccountRepository.findByCardId(account.cardId());
+
+        assertThat(found).isPresent();
+        assertThat(found.get().id()).isEqualTo(account.id());
+    }
 }

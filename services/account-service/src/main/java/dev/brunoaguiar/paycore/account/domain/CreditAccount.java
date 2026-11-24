@@ -45,4 +45,14 @@ public class CreditAccount {
     public Money availableCredit() {
         return availableCredit;
     }
+
+    public void reserve(Money amount) {
+        if (amount.isZero()) {
+            throw new IllegalArgumentException("O valor da reserva deve ser maior que zero");
+        }
+        if (amount.isGreaterThan(availableCredit)) {
+            throw new InsufficientCreditException(availableCredit, amount);
+        }
+        availableCredit = availableCredit.minus(amount);
+    }
 }

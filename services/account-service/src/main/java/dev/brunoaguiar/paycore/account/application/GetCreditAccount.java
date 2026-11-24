@@ -17,6 +17,6 @@ public class GetCreditAccount {
 
     public CreditAccount execute(UUID accountId) {
         return creditAccountRepository.findById(accountId)
-                .orElseThrow(() -> new CreditAccountNotFoundException(accountId));
+                .orElseThrow(() -> CreditAccountNotFoundException.forId(accountId));
     }
 }

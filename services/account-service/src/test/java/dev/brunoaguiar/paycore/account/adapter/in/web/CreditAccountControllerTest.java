@@ -1,26 +1,22 @@
 package dev.brunoaguiar.paycore.account.adapter.in.web;
 
-import dev.brunoaguiar.paycore.account.application.CreditAccountAlreadyExistsException;
-import dev.brunoaguiar.paycore.account.application.CreditAccountNotFoundException;
-import dev.brunoaguiar.paycore.account.application.GetCreditAccount;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import dev.brunoaguiar.paycore.account.application.OpenCreditAccount;
+import dev.brunoaguiar.paycore.account.application.*;
 import dev.brunoaguiar.paycore.account.domain.CreditAccount;
+import dev.brunoaguiar.paycore.account.domain.InsufficientCreditException;
 import dev.brunoaguiar.paycore.account.domain.Money;
-import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CreditAccountController.class)
 class CreditAccountControllerTest {
@@ -33,6 +29,9 @@ class CreditAccountControllerTest {
 
     @MockitoBean
     private GetCreditAccount getCreditAccount;
+
+    @MockitoBean
+    private ReserveCredit reserveCredit;
 
     @Test
     void opensAccount() throws Exception {
@@ -69,7 +68,7 @@ class CreditAccountControllerTest {
     @Test
     void returnsNotFoundWhenAccountDoesNotExist() throws Exception {
         UUID id = UUID.randomUUID();
-        when(getCreditAccount.execute(id)).thenThrow(new CreditAccountNotFoundException(id));
+        when(getCreditAccount.execute(id)).thenThrow(CreditAccountNotFoundException.forId(id));
 
         mockMvc.perform(get("/accounts/{id}", id))
                 .andExpect(status().isNotFound())
@@ -102,5 +101,61 @@ class CreditAccountControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Dados inválidos"))
                 .andExpect(jsonPath("$.errors.creditLimit").value("O limite de crédito deve ser maior que zero"));
+    }
+
+    @Test
+    void reservesCredit() throws Exception {
+        UUID cardId = UUID.randomUUID();
+
+        mockMvc.perform(post("/accounts/reserve")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        { "cardId": "%s", "amount": 80.00 }
+                        """.formatted(cardId)))
+                .andExpect(status().isNoContent());
+
+        verify(reserveCredit).execute(cardId, Money.of("80.00"));
+    }
+
+    @Test
+    void returnsBadRequestWhenReserveAmountIsZero() throws Exception {
+        mockMvc.perform(post("/accounts/reserve")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "cardId": "%s", "amount": 0 }
+                                """.formatted(UUID.randomUUID())))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Dados inválidos"))
+                .andExpect(jsonPath("$.errors.amount").value("O valor da reserva deve ser maior que zero"));
+    }
+
+    @Test
+    void returnsNotFoundWhenCardHasNoAccount() throws Exception {
+        UUID cardId = UUID.randomUUID();
+        doThrow(CreditAccountNotFoundException.forCard(cardId))
+                .when(reserveCredit).execute(cardId, Money.of("80.00"));
+
+        mockMvc.perform(post("/accounts/reserve")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "cardId": "%s", "amount": 80.00 }
+                                """.formatted(cardId)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").value("O cartão não tem conta de crédito: " + cardId));
+    }
+
+    @Test
+    void returnsUnprocessableContentWhenCreditIsInsufficient() throws Exception {
+        UUID cardId = UUID.randomUUID();
+        doThrow(new InsufficientCreditException(Money.of("50.00"), Money.of("80.00")))
+                .when(reserveCredit).execute(cardId, Money.of("80.00"));
+
+        mockMvc.perform(post("/accounts/reserve")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "cardId": "%s", "amount": 80.00 }
+                                """.formatted(cardId)))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.title").value("Crédito insuficiente"));
     }
 }

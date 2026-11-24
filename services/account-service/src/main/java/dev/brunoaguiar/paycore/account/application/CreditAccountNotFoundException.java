@@ -4,7 +4,15 @@ import java.util.UUID;
 
 public class CreditAccountNotFoundException extends RuntimeException {
 
-    public CreditAccountNotFoundException(UUID accountId) {
-        super("Conta de crédito não encontrada: " + accountId);
+    private CreditAccountNotFoundException(String message) {
+        super(message);
+    }
+
+    public static CreditAccountNotFoundException forId(UUID accountId) {
+        return new CreditAccountNotFoundException("Conta de crédito não encontrada: " + accountId);
+    }
+
+    public static CreditAccountNotFoundException forCard(UUID cardId) {
+        return new CreditAccountNotFoundException("O cartão não tem conta de crédito: " + cardId);
     }
 }
