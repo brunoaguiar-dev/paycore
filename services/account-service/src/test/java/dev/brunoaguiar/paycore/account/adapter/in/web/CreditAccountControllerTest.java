@@ -69,7 +69,7 @@ class CreditAccountControllerTest {
     @Test
     void returnsNotFoundWhenAccountDoesNotExist() throws Exception {
         UUID id = UUID.randomUUID();
-        when(getCreditAccount.execute(id)).thenThrow(new CreditAccountNotFoundException(id));
+        when(getCreditAccount.execute(id)).thenThrow(CreditAccountNotFoundException.forId(id));
 
         mockMvc.perform(get("/accounts/{id}", id))
                 .andExpect(status().isNotFound())

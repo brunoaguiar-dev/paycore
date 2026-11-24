@@ -28,6 +28,14 @@ class InMemoryCreditAccountRepository implements CreditAccountRepository {
                 .anyMatch(account -> account.cardId().equals(cardId));
     }
 
+    @Override
+    public Optional<CreditAccount> findByCardId(UUID cardId) {
+        return accounts.values().stream()
+                .filter(account -> account.cardId().equals(cardId))
+                .findFirst()
+                .map(this::copy);
+    }
+
     private CreditAccount copy(CreditAccount account) {
         return CreditAccount.restore(
                 account.id(), account.cardId(), account.creditLimit(), account.availableCredit());

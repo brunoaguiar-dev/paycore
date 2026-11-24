@@ -18,7 +18,7 @@ class CreditAccountTest {
     }
 
     @Test
-    void AccountWithoutCardIsNotAllowed() {
+    void accountWithoutCardIsNotAllowed() {
         Money creditLimit = Money.of("5000.00");
 
         assertThatThrownBy(() -> new CreditAccount(null, creditLimit))
@@ -71,5 +71,14 @@ class CreditAccountTest {
         assertThatThrownBy(() -> account.reserve(amount))
                 .isInstanceOf(InsufficientCreditException.class);
         assertThat(account.availableCredit()).isEqualTo(Money.of("5000.00"));
+    }
+
+    @Test
+    void reservingZeroIsNotAllowed() {
+        CreditAccount account = new CreditAccount(UUID.randomUUID(), Money.of("5000.00"));
+        Money amount = Money.of("0.00");
+
+        assertThatThrownBy(() -> account.reserve(amount))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -10,4 +10,6 @@ public interface CreditAccountRepository {
     Optional<CreditAccount> findById(UUID id);
 
     boolean existsByCardId(UUID cardId);
+
+    Optional<CreditAccount> findByCardId(UUID cardId);
 }
